@@ -1,0 +1,41 @@
+services:
+  attacker:
+    build: ./attacker
+    container_name: attacker
+    hostname: attacker
+    networks:
+      - lab-passwords
+    volumes:
+      - ./scripts:/lab/scripts
+      - ./wordlists:/lab/wordlists
+    tty: true
+    stdin_open: true
+
+  target-ssh:
+    build: ./target-ssh
+    container_name: target-ssh
+    hostname: target-ssh
+    networks:
+      - lab-passwords
+
+  target-web:
+    image: nginx:alpine
+    container_name: target-web
+    hostname: target-web
+    ports:
+      - "1234:80"
+    volumes:
+      - ./target-web/site:/usr/share/nginx/html:ro
+    networks:
+      - lab-passwords
+
+  target-samba:
+    build: ./target-samba
+    container_name: target-samba
+    hostname: target-samba
+    networks:
+      - lab-passwords
+
+networks:
+  lab-passwords:
+    driver: bridge
